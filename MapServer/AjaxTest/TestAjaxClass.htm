@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=iso-8895-1" />
+    <title>测试Ajax类</title>
+    <script type="text/javascript" src="Scripts/LmaAjax.js"></script>
+</head>
+<body>
+<div id ="'response'"/>
+<script type="text/javascript">
+    var ajax = new Ajax();
+    ajax.method = "post";
+    ajax.sync = true;
+    ajax.URL = "";
+    ajax.PostData = '';
+    ajax.OnResponse=parseMethod;
+    ajax.send();
+
+    //解析方法
+    function parseMethod(responText) {
+    var t=document.GetElementById('response');
+    if (window.XMLHttpRequest) {
+    t.innerText=responText;
+    }
+    else if (window.ActiveXObject) {
+      t.innerText=responText;
+    }
+    }
+</script>
+
+</body>
+</html>

@@ -25,8 +25,10 @@ function Ajax() {
     //产生XHR对象
     Ajax.prototype.CreateXmlHttpRequest = function () {
         if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
             return new XMLHttpRequest();
         } else if (window.ActiveXObject) {
+            // code for IE6, IE5
             var msxmls = new Array('Msxml2.XMLHTTP.5.0', 'Msxml2.XMLHTTP.4.0'
             , 'Msxml2.XMLHTTP.3.0', 'Msxml2.XMLHTTP', 'Microsoft.XMLHTTP');
             for (var i = 0; i < msxmls.Length; i++) {
@@ -43,10 +45,33 @@ function Ajax() {
     Ajax.prototype.send = function () {
         if (this.HttpObj != null) {
             this.HttpObj.Open(this.method, this.URL, this.sync); ;
-            if (this.method.toLocaleUpperCase()=="GET") {
+            if (this.method.toLocaleUpperCase() == "GET") {
+                this.HttpObj.Send(null);
+            }
+            else if (this.method.toLocaleUpperCase() == "POST") {
+                this.HttpObj.SetRequestHeader("Content-Type",
+                "application/x-www-form-urlencoded");
+                this.HttpObj.Send(this.PostData);
+            }
+            else {
+                return;
             }
         }
-
     }
+
     //事件检测
+    Ajax.handleStateChange = function (Obj) {
+        if (Obj.HttpObj.readyState == 4) {
+            //判断对象状态
+            if (Obj.HttpObj.status == 200) {
+                Obj.RetData = Obj.HttpObj.responseText;
+                if (Obj.OnResponse) {
+                    Obj.OnResponse(Obj.RetData);
+                }
+                return;
+            }
+        }
+    }
+
+
 }
