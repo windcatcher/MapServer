@@ -13,14 +13,15 @@ function Ajax() {
     //
     this.OnResponse = null;
     //
-    ths.HttpObj = this.CreateXmlHttpRequest();
+    this.HttpObj = this.CreateXmlHttpRequest();
     if (this.HttpObj == null) {
         return;
     }
+    
     var Obj = this;
     this.HttpObj.onreadystatechange = function () {
-        Ajax.handleStateChanget(Obj)
-    }
+        Ajax.handleStateChange(Obj)        
+    }}
 
     //产生XHR对象
     Ajax.prototype.CreateXmlHttpRequest = function () {
@@ -44,14 +45,14 @@ function Ajax() {
     //使用XHR发送HTTP请求
     Ajax.prototype.send = function () {
         if (this.HttpObj != null) {
-            this.HttpObj.Open(this.method, this.URL, this.sync); ;
+            this.HttpObj.open(this.method, this.URL, this.sync); 
             if (this.method.toLocaleUpperCase() == "GET") {
-                this.HttpObj.Send(null);
+                this.HttpObj.send(null);
             }
             else if (this.method.toLocaleUpperCase() == "POST") {
-                this.HttpObj.SetRequestHeader("Content-Type",
+                this.HttpObj.setRequestHeader("Content-Type",
                 "application/x-www-form-urlencoded");
-                this.HttpObj.Send(this.PostData);
+                this.HttpObj.send(this.PostData);
             }
             else {
                 return;
@@ -74,4 +75,3 @@ function Ajax() {
     }
 
 
-}

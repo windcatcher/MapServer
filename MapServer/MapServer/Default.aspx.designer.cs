@@ -22,15 +22,6 @@ namespace MapServer {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// ScriptManager1 控件。
-        /// </summary>
-        /// <remarks>
-        /// 自动生成的字段。
-        /// 若要进行修改，请将字段声明从设计器文件移到代码隐藏文件。
-        /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
-        
-        /// <summary>
         /// Toolbar1 控件。
         /// </summary>
         /// <remarks>
@@ -38,6 +29,15 @@ namespace MapServer {
         /// 若要进行修改，请将字段声明从设计器文件移到代码隐藏文件。
         /// </remarks>
         protected global::ESRI.ArcGIS.ADF.Web.UI.WebControls.Toolbar Toolbar1;
+        
+        /// <summary>
+        /// Toc1 控件。
+        /// </summary>
+        /// <remarks>
+        /// 自动生成的字段。
+        /// 若要进行修改，请将字段声明从设计器文件移到代码隐藏文件。
+        /// </remarks>
+        protected global::ESRI.ArcGIS.ADF.Web.UI.WebControls.Toc Toc1;
         
         /// <summary>
         /// Map1 控件。
