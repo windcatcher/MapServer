@@ -12,12 +12,11 @@
     <style type="text/css">
         #head
         {
-            height: 90px;
-            background-color: #ff0000;
+            height: 105px;
         }
         #menu
         {
-            height: 58px;
+            height: 80px;
         }
         #searchPoisition
         {
@@ -40,8 +39,8 @@
         {
             height: 500px;
             width: 20%;
-            background-color: #ff0000;
-            float: left;
+            background-color:Gray;
+            float: left;           
         }
     </style>
     <script type="text/javascript">
@@ -90,18 +89,18 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div id="head" style="background-color: #008000; padding: inherit">
+    <div id="head">
         <div id="menu">
             <esri:Toolbar ID="Toolbar1" runat="server" BuddyControlType="Map" Group="Toolbar1_Group"
-                Height="100%" ToolbarItemDefaultStyle-BackColor="White" ToolbarItemDefaultStyle-Font-Names="Arial"
+                ToolbarItemDefaultStyle-BackColor="White" ToolbarItemDefaultStyle-Font-Names="微软雅黑"
                 ToolbarItemDefaultStyle-Font-Size="Smaller" ToolbarItemDisabledStyle-BackColor="White"
-                ToolbarItemDisabledStyle-Font-Names="Arial" ToolbarItemDisabledStyle-Font-Size="Smaller"
+                ToolbarItemDisabledStyle-Font-Names="微软雅黑" ToolbarItemDisabledStyle-Font-Size="Smaller"
                 ToolbarItemDisabledStyle-ForeColor="Gray" ToolbarItemHoverStyle-BackColor="White"
                 ToolbarItemHoverStyle-Font-Bold="True" ToolbarItemHoverStyle-Font-Italic="True"
-                ToolbarItemHoverStyle-Font-Names="Arial" ToolbarItemHoverStyle-Font-Size="Smaller"
+                ToolbarItemHoverStyle-Font-Names="微软雅黑" ToolbarItemHoverStyle-Font-Size="Smaller"
                 ToolbarItemSelectedStyle-BackColor="White" ToolbarItemSelectedStyle-Font-Bold="True"
-                ToolbarItemSelectedStyle-Font-Names="Arial" ToolbarItemSelectedStyle-Font-Size="Smaller"
-                WebResourceLocation="/aspnet_client/ESRI/WebADF/" Width="100%">
+                ToolbarItemSelectedStyle-Font-Names="微软雅黑" ToolbarItemSelectedStyle-Font-Size="Smaller"
+                WebResourceLocation="/aspnet_client/ESRI/WebADF/" >
                 <BuddyControls>
                     <esri:BuddyControl Name="Map1" />
                 </BuddyControls>
