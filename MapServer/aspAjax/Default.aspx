@@ -27,6 +27,7 @@
             xmlHttp.onreadystatechange = doUpdate;
             xmlHttp.send();
             return false;
+        }
 
         function doUpdate() {
             if (xmlHttp.readyState == 4) {

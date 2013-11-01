@@ -12,11 +12,11 @@
     <style type="text/css">
         #head
         {
-            height: 105px;
+            height: 45px;
         }
         #menu
         {
-            height: 80px;
+            height: 20px;
         }
         #searchPoisition
         {
@@ -39,8 +39,14 @@
         {
             height: 500px;
             width: 20%;
-            background-color:Gray;
-            float: left;           
+            background-color: Gray;
+            float: left;
+        }
+        .style1
+        {
+            height: 30px;
+            visibility: hidden;
+            width: 381px;
         }
     </style>
     <script type="text/javascript">
@@ -83,59 +89,98 @@
             var message='attr='+attr;//传递消息
             var context = 'Map1';
             <%=sCallBackFuncStr%>////调用异步处理
-}
+        }
+
+        //**创建柱状图
+        function createBarTheme() {
+            var message='Bar';//传递消息
+            var context = 'Map1';
+            <%=sCallBackFuncStr%>////调用异步处理
+        }
+
+        //**创建饼状图
+        function createPieTheme() {
+        var message='Pie';
+        var context='Map1';
+        <%= sCallBackFuncStr%>            
+        }
+
 
     </script>
 </head>
 <body>
     <form id="form1" runat="server">
+    <asp:Panel ID="Panel1" runat="server">
+        <table style="width: 100%;">
+            <tr>
+                <td id="TaskMenuCell" style="padding-left: 5px;" valign="middle">
+                    <asp:Menu ID="TaskMenu" runat="server" Orientation="Horizontal" BackColor="Transparent"
+                        DynamicHorizontalOffset="2" Font-Names="Verdana" Font-Size="8pt" ForeColor="White"
+                        StaticSubMenuIndent="10px">
+                        <Items>
+                            <asp:MenuItem Text="柱状图" Value="柱状图"></asp:MenuItem>
+                            <asp:MenuItem Text="饼状图" Value="饼状图"></asp:MenuItem>
+                        </Items>
+                    </asp:Menu>
+                </td>
+                <td id="ToolbarCell" style="height: 30px;">
+                    <esri:Toolbar ID="Toolbar1" runat="server" BuddyControlType="Map" Group="Toolbar1_Group"
+                        ToolbarItemDefaultStyle-BackColor="White" ToolbarItemDefaultStyle-Font-Names="微软雅黑"
+                        ToolbarItemDefaultStyle-Font-Size="Smaller" ToolbarItemDisabledStyle-BackColor="White"
+                        ToolbarItemDisabledStyle-Font-Names="微软雅黑" ToolbarItemDisabledStyle-Font-Size="Smaller"
+                        ToolbarItemDisabledStyle-ForeColor="Gray" ToolbarItemHoverStyle-BackColor="White"
+                        ToolbarItemHoverStyle-Font-Bold="True" ToolbarItemHoverStyle-Font-Italic="True"
+                        ToolbarItemHoverStyle-Font-Names="微软雅黑" ToolbarItemHoverStyle-Font-Size="Smaller"
+                        ToolbarItemSelectedStyle-BackColor="White" ToolbarItemSelectedStyle-Font-Bold="True"
+                        ToolbarItemSelectedStyle-Font-Names="微软雅黑" ToolbarItemSelectedStyle-Font-Size="Smaller"
+                        WebResourceLocation="/aspnet_client/ESRI/WebADF/" Height="34px" Width="286px"
+                        ToolbarStyle="ImageOnly">
+                        <BuddyControls>
+                            <esri:BuddyControl Name="Map1" />
+                        </BuddyControls>
+                        <ToolbarItems>
+                            <esri:Tool ClientAction="DragRectangle" DefaultImage="esriZoomIn.gif" HoverImage="esriZoomInU.gif"
+                                JavaScriptFile="" Name="MapZoomIn" SelectedImage="esriZoomInD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
+                                ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapZoomIn" Text="Zoom In"
+                                ToolTip="Zoom In" />
+                            <esri:Tool ClientAction="DragRectangle" DefaultImage="esriZoomOut.gif" HoverImage="esriZoomOutU.gif"
+                                JavaScriptFile="" Name="MapZoomOut" SelectedImage="esriZoomOutD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
+                                ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapZoomOut" Text="Zoom Out"
+                                ToolTip="Zoom Out" />
+                            <esri:Tool ClientAction="DragImage" DefaultImage="esriPan.gif" HoverImage="esriPanU.gif"
+                                JavaScriptFile="" Name="MapPan" SelectedImage="esriPanD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
+                                ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapPan" Text="Pan"
+                                ToolTip="Pan" />
+                            <esri:Command ClientAction="" DefaultImage="esriFullExt.gif" HoverImage="esriFullExtU.gif"
+                                JavaScriptFile="" Name="MapFullExtent" SelectedImage="esriFullExtD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
+                                ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapFullExtent" Text="Full Extent"
+                                ToolTip="Full Extent" />
+                            <esri:Command BuddyItem="MapForward" ClientAction="ToolbarMapBack" DefaultImage="esriBack.gif"
+                                Disabled="True" DisabledImage="esriBack.gif" HoverImage="esriBackU.gif" JavaScriptFile=""
+                                Name="MapBack" SelectedImage="esriBackD.gif" Text="Back" ToolTip="Map Back Extent" />
+                            <esri:Command BuddyItem="MapBack" ClientAction="ToolbarMapForward" DefaultImage="esriForward.gif"
+                                Disabled="True" DisabledImage="esriForward.gif" HoverImage="esriForwardU.gif"
+                                JavaScriptFile="" Name="MapForward" SelectedImage="esriForwardD.gif" Text="Forward"
+                                ToolTip="Map Forward Extent" />
+                            <esri:Tool ClientAction="Point" JavaScriptFile="" Name="Select" ServerActionAssembly="MapServer"
+                                ServerActionClass="SelectFeature" DefaultImage="~/select.png" DisabledImage="~/select.png"
+                                HoverImage="~/select.png" SelectedImage="~/select.png" />
+                            <esri:Command ClientAction="" DefaultImage="~/inf.png" DisabledImage="~/inf.png"
+                                HoverImage="~/inf.png" JavaScriptFile="" Name="Command" SelectedImage="~/inf.png"
+                                ServerActionAssembly="MapServer" ServerActionClass="SelectFeature" />
+                        </ToolbarItems>
+                    </esri:Toolbar>
+                </td>
+            </tr>
+        </table>
+    </asp:Panel>
     <div id="head">
         <div id="menu">
-            <esri:Toolbar ID="Toolbar1" runat="server" BuddyControlType="Map" Group="Toolbar1_Group"
-                ToolbarItemDefaultStyle-BackColor="White" ToolbarItemDefaultStyle-Font-Names="微软雅黑"
-                ToolbarItemDefaultStyle-Font-Size="Smaller" ToolbarItemDisabledStyle-BackColor="White"
-                ToolbarItemDisabledStyle-Font-Names="微软雅黑" ToolbarItemDisabledStyle-Font-Size="Smaller"
-                ToolbarItemDisabledStyle-ForeColor="Gray" ToolbarItemHoverStyle-BackColor="White"
-                ToolbarItemHoverStyle-Font-Bold="True" ToolbarItemHoverStyle-Font-Italic="True"
-                ToolbarItemHoverStyle-Font-Names="微软雅黑" ToolbarItemHoverStyle-Font-Size="Smaller"
-                ToolbarItemSelectedStyle-BackColor="White" ToolbarItemSelectedStyle-Font-Bold="True"
-                ToolbarItemSelectedStyle-Font-Names="微软雅黑" ToolbarItemSelectedStyle-Font-Size="Smaller"
-                WebResourceLocation="/aspnet_client/ESRI/WebADF/" >
-                <BuddyControls>
-                    <esri:BuddyControl Name="Map1" />
-                </BuddyControls>
-                <ToolbarItems>
-                    <esri:Tool ClientAction="DragRectangle" DefaultImage="esriZoomIn.gif" HoverImage="esriZoomInU.gif"
-                        JavaScriptFile="" Name="MapZoomIn" SelectedImage="esriZoomInD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
-                        ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapZoomIn" Text="Zoom In"
-                        ToolTip="Zoom In" />
-                    <esri:Tool ClientAction="DragRectangle" DefaultImage="esriZoomOut.gif" HoverImage="esriZoomOutU.gif"
-                        JavaScriptFile="" Name="MapZoomOut" SelectedImage="esriZoomOutD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
-                        ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapZoomOut" Text="Zoom Out"
-                        ToolTip="Zoom Out" />
-                    <esri:Tool ClientAction="DragImage" DefaultImage="esriPan.gif" HoverImage="esriPanU.gif"
-                        JavaScriptFile="" Name="MapPan" SelectedImage="esriPanD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
-                        ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapPan" Text="Pan"
-                        ToolTip="Pan" />
-                    <esri:Command ClientAction="" DefaultImage="esriFullExt.gif" HoverImage="esriFullExtU.gif"
-                        JavaScriptFile="" Name="MapFullExtent" SelectedImage="esriFullExtD.gif" ServerActionAssembly="ESRI.ArcGIS.ADF.Web.UI.WebControls"
-                        ServerActionClass="ESRI.ArcGIS.ADF.Web.UI.WebControls.Tools.MapFullExtent" Text="Full Extent"
-                        ToolTip="Full Extent" />
-                    <esri:Command BuddyItem="MapForward" ClientAction="ToolbarMapBack" DefaultImage="esriBack.gif"
-                        Disabled="True" DisabledImage="esriBack.gif" HoverImage="esriBackU.gif" JavaScriptFile=""
-                        Name="MapBack" SelectedImage="esriBackD.gif" Text="Back" ToolTip="Map Back Extent" />
-                    <esri:Command BuddyItem="MapBack" ClientAction="ToolbarMapForward" DefaultImage="esriForward.gif"
-                        Disabled="True" DisabledImage="esriForward.gif" HoverImage="esriForwardU.gif"
-                        JavaScriptFile="" Name="MapForward" SelectedImage="esriForwardD.gif" Text="Forward"
-                        ToolTip="Map Forward Extent" />
-                    <esri:Tool ClientAction="Point" JavaScriptFile="" Name="Select" ServerActionAssembly="MapServer"
-                        ServerActionClass="SelectFeature" DefaultImage="~/select.png" DisabledImage="~/select.png"
-                        HoverImage="~/select.png" SelectedImage="~/select.png" />
-                    <esri:Command ClientAction="" DefaultImage="~/inf.png" DisabledImage="~/inf.png"
-                        HoverImage="~/inf.png" JavaScriptFile="" Name="Command" SelectedImage="~/inf.png"
-                        ServerActionAssembly="MapServer" ServerActionClass="SelectFeature" />
-                </ToolbarItems>
-            </esri:Toolbar>
+            <input id="btn_themeZhu" type="button" value="柱状图" onclick="return createBarTheme()" />
+            <input id="btn_themeBing" type="button" value="饼状图" onclick="return createPieTheme()" />
+            <input id="Button5" type="button" value="XX图" />
+            <input id="Button6" type="button" value="button" />
+            <input id="Button7" type="button" value="button" />
         </div>
         <div id="searchPoisition">
             X坐标<input id="TxtX" type="text" />

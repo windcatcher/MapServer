@@ -1,9 +1,88 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title></title>
+    <title>bbbb</title>
+    <script type="text/javascript">
+
+        function Studen(name, age) {
+            //定义私有成员变量
+            var _name = null;
+            var _age = null;
+            this.Sex = null;
+            var init = function () {
+                _name = name;
+                _age = age;
+            }
+
+            this.set_Name = function (value) {
+                _name = value;
+            }
+
+            this.get_Name = function () {
+                return _name;
+            }
+
+            this.set_Age = function (value) {
+                _age = value;
+            }
+
+            this.get_Age = function () {
+                return _age;
+            }
+
+            this.toString = function () {
+                return this.get_Name() + ",age is " + this.get_Age() + ",sex is" + this.Sex;
+            }
+            init();
+        }
+
+        Studen.prototype.toProtoString = function () {
+            return this.get_Name() + ",age is " + this.get_Age() + ",sex is" + this.Sex;
+        }
+
+
+        function Person() { }
+        Person.prototype.name = "liangms";
+        Person.prototype.age = "26";
+        Person.prototype.sayName = function () {
+            print(this.name);
+        };
+
+
+        function print(msg) {
+            window.document.write(msg + "<br>")
+        }
+
+        function load() {
+            var student = new Studen("liangms", "26");
+            var s2 = new Studen("xxxx", "34");
+            student.Sex = "male";
+            print(student.toProtoString());
+            print(s2.toProtoString());
+            print("hah");
+            var p1 = new Person();
+            p1.sayName();
+            var p2 = new Person();
+            p2.sayName();
+            Map.show();
+        }
+
+        //静态类
+        var Map = {
+            name: "map1",
+            sacle: 500,
+            show: function () {
+                var msg = "map is " + name + ",sacle is " + sacle + "";
+                print(msg);
+            }
+        }
+      
+    </script>
 </head>
 <body>
-
+    <div>
+        <p>
+            <input type="button" name="name" value="onclick" onclick="load()" /></p>
+    </div>
 </body>
 </html>

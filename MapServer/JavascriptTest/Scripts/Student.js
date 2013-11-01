@@ -24,9 +24,10 @@
     }
 
     this.Sex = null;
-
-    initial();
+   
     this.toString = function () {
         return this.get_name() + ",age is " + this.get_age() + ",sex is " + this.Sex;
     }
+    //在类的最后调用init方法
+    initial();
 }
