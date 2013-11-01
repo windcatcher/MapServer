@@ -132,6 +132,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppCode\JsMesage.cs" />
     <Compile Include="AppCode\SelectFeature.cs" />
     <Content Include="AppCode\ServerUtility.cs" />
     <Compile Include="Default.aspx.cs">

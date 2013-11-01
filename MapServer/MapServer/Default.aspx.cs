@@ -17,6 +17,7 @@ using ESRI.ArcGIS.ADF.Web.Display.Graphics;
 using ESRI.ArcGIS.ADF.Web.DataSources.Graphics;
 using ESRI.ArcGIS.Geodatabase;
 using ESRI.ArcGIS.Display;
+using MapServer.AppCode;
 
 
 
@@ -35,21 +36,37 @@ namespace MapServer
 
         public void RaiseCallbackEvent(string eventArgs)
         {
-            if (eventArgs.Contains("attr"))
+            switch (eventArgs)
             {
-                LocalByAttribute(eventArgs);
-            }
-            else if (eventArgs.Contains("Bar"))
-            {
-                CreateBarRenderer(7, new string[] { "AREA" });
-            }
-            else if (eventArgs.Contains("Pie"))
-            {                
-                CreatePieTheme(7, new string[] { "AREA" });
-            }
-            else if (eventArgs.Contains("X"))
-            {
-                LocalByXY(eventArgs);
+                case "attr":
+                    {
+                        LocalByAttribute(eventArgs);
+                    }
+                    break;
+                case "Bar":
+                    {
+                        CreateBarRenderer(7, new string[] { "AREA" });
+                    }
+                    break;
+                case "Pie":
+                    {
+                        CreatePieTheme(7, new string[] { "AREA" });
+                    }
+                    break;
+                case "X":
+                    {
+                        LocalByXY(eventArgs);
+                    }
+                    break;
+                case "Test":
+                    {
+                        TestAsg();
+                    }
+                    break;
+                default:
+                    { }
+                    break;
+
             }
         }
         /// <summary>
@@ -294,137 +311,6 @@ namespace MapServer
             sCallBackFuncStr = Map1.CallbackResults.ToString();
         }
 
-        //创建柱状专题图
-        public void CreateBarRenderer(int layerID, string[] fields)
-        {
-            // 得到地图服务下的ArcObjects map对象
-            ESRI.ArcGIS.Server.IServerContext pServerContext = GetServerContext();
-
-            ESRI.ArcGIS.Carto.IMapServer mapServer = (ESRI.ArcGIS.Carto.IMapServer)pServerContext.ServerObject;
-            ESRI.ArcGIS.Carto.IMapServerObjects2 mapServerObjects = (ESRI.ArcGIS.Carto.IMapServerObjects2)mapServer;
-            string mapName = mapServer.DefaultMapName;
-            ESRI.ArcGIS.Carto.IMap aoMap = mapServerObjects.get_Map(mapName);
-
-            ESRI.ArcGIS.Carto.ILayer pLayer = aoMap.get_Layer(layerID);//得到图层
-            ESRI.ArcGIS.Carto.IGeoFeatureLayer pGeoLayer = pLayer as IGeoFeatureLayer;
-            //设置专题图元素的属性名称列表           
-            IChartRenderer pChartRender = pServerContext.CreateObject("esriCarto.ChartRenderer") as IChartRenderer;
-            IRendererFields pRenderFields = pChartRender as IRendererFields;
-            foreach (string var in fields)
-            {
-                pRenderFields.AddField(var, var);
-            }
-
-            //实例化图表对象并取得元素指定属性的最大值
-            IBarChartSymbol pBarChartSymbol = pServerContext.CreateObject("esriDisplay.BarChartSymbol") as IBarChartSymbol;
-            IChartSymbol pChartSymbol = pBarChartSymbol as IChartSymbol;
-
-            pChartSymbol.MaxValue = GetStaMaxMin(fields, pGeoLayer)[0];
-            pBarChartSymbol.Width = 8;
-            IMarkerSymbol pMarkerSymbol = pBarChartSymbol as IMarkerSymbol;
-            pMarkerSymbol.Size = 50;
-
-            //设置柱状图每列填充效果
-            ISymbolArray pSymbolArray = pBarChartSymbol as ISymbolArray;
-            Random ranColor = new Random();
-            for (int i = 0; i < fields.Length; i++)
-            {
-                IFillSymbol pFillSymbol = pServerContext.CreateObject("esriDisplay.SimpleFillSymbol") as IFillSymbol;
-                pFillSymbol.Color = GetRGB(ranColor.Next(255), ranColor.Next(255), ranColor.Next(255), pServerContext);
-                pSymbolArray.AddSymbol((ISymbol)pFillSymbol);
-            }
-
-            //设置地图图层背景
-            ESRI.ArcGIS.Display.ISimpleFillSymbol pFSymbol = pServerContext.CreateObject("esriDisplay.SimpleFillSymbol") as ESRI.ArcGIS.Display.SimpleFillSymbol;
-            pFSymbol.Color = GetRGB(239, 228, 249, pServerContext);
-            pChartRender.BaseSymbol = pFSymbol as ISymbol;
-
-            //应用柱状专题到指定图层
-            pChartRender.ChartSymbol = pBarChartSymbol as IChartSymbol;
-            pChartRender.Label = "Test";
-            pChartRender.UseOverposter = false;
-            pChartRender.CreateLegend();
-            pGeoLayer.Renderer = pChartRender as IFeatureRenderer;
-
-            //刷新地图显示图表及图例
-            mapServerObjects.RefreshServerObjects();
-            Map1.RefreshResource("MapResourceItem0");
-            Toc1.BuddyControl = "Map1";
-            //Toc1.Refresh();
-            Map1.Refresh();
-            pServerContext.ReleaseContext();
-
-        }
-
-        /// <summary>
-        /// 创建饼状专题图
-        /// </summary>
-        /// <param name="nLayerId">图层Id</param>
-        /// <param name="strFileds">字段名称集合</param>
-        private void CreatePieTheme(int nLayerId,string[] strFileds)
-        {
-            CreatePieTheme(this.Page, nLayerId, strFileds);
-            ////获取服务器对象
-            //IServerContext svrContext =ServerUtility.GetServerContext(this.Page);
-            //if (svrContext == null)
-            //    return;
-            //IMapServer mapSvr = svrContext.ServerObject as IMapServer;
-            //if (mapSvr == null)
-            //    return;
-            ////使用服务器对象
-            //IMapServerObjects2 mapSvrObj = mapSvr as IMapServerObjects2;
-            //if (mapSvrObj == null)
-            //    return;
-            ////远程调用AO对象
-            //string strMapName = mapSvr.DefaultMapName;
-            //IMap aoMap = mapSvrObj.get_Map(strMapName);
-            ////得到图层
-            //ILayer aoLayer = aoMap.get_Layer(nLayerId);
-            //IGeoFeatureLayer aoGeoLyr = aoLayer as IGeoFeatureLayer;
-
-            ////设置专题图的属性列表
-            //IChartRenderer aoCharRndr = svrContext.CreateObject("esriCarto.ChartRenderer") as IChartRenderer;
-            //IRendererFields aoRndrFlds = aoCharRndr as IRendererFields;
-            //foreach (string field in strFileds)
-            //{
-            //    aoRndrFlds.AddField(field, field);
-            //}
-
-        }
-
-
-     
-
-        /// <summary>
-        /// 得到服务器上下文：AGSServer远程调用AO  
-        /// </summary>
-        /// <returns></returns>
-        private IServerContext GetServerContext()
-        {
-            string serverName = "localhost";    //服务器机器名称
-            string mapSvrName = "china";        //空间数据服名称
-            IServerObjectManager svrObjMgr = null;
-            //获取SOM，并放入session变量中
-            if (Session["SOM"]==null)
-            {
-                //用ADF connection库
-                AGSServerConnection agsServerConnection = new AGSServerConnection();
-                agsServerConnection.Host = serverName;
-                //建立与服务器的连接
-                agsServerConnection.Connect();                
-                svrObjMgr = agsServerConnection.ServerObjectManager;
-            }
-            else
-            {
-                svrObjMgr = Session["SOM"] as ServerObjectManager;
-            }
-
-            //根据服务名来创建上下文
-            IServerContext svrContext = svrObjMgr.CreateServerContext(mapSvrName, "MapServer");
-            return svrContext;                   
-        }
-
-       
         public string GetCallbackResult()
         {
             return sCallBackFuncStr;
@@ -432,8 +318,8 @@ namespace MapServer
         #endregion
 
         #region 专题图
-           //创建饼状专题图
-        public  void CreatePieTheme(System.Web.UI.Page page, int nLayerID, string[] fields)
+        //创建饼状专题图
+        public void CreatePieTheme(System.Web.UI.Page page, int nLayerID, string[] fields)
         {
             if (page == null)
                 return;
@@ -521,7 +407,7 @@ namespace MapServer
         /// </summary>
         /// <param name="fields">元素的属性名称列表</param>
         /// <returns></returns>
-        public  double[] GetStaMaxMin(string[] fields, IFeatureLayer pGeoFeatureLyer)
+        public double[] GetStaMaxMin(string[] fields, IFeatureLayer pGeoFeatureLyer)
         {
             double pMaxValue = 0;
             double pMinValue = 0;
@@ -554,7 +440,7 @@ namespace MapServer
         /// <param name="green"></param>
         /// <param name="blue"></param>
         /// <returns></returns>
-        public  ESRI.ArcGIS.Display.IColor GetRGB(int red, int green, int blue, IServerContext pServerContext)
+        public ESRI.ArcGIS.Display.IColor GetRGB(int red, int green, int blue, IServerContext pServerContext)
         {
             IRgbColor rgbColor = pServerContext.CreateObject("esriDisplay.RGBColor") as IRgbColor;
             IColor color = rgbColor as IColor;
@@ -562,6 +448,168 @@ namespace MapServer
             rgbColor.Green = green;
             rgbColor.Blue = blue;
             return color;
+        }
+
+
+        //创建柱状专题图
+        public void CreateBarRenderer(int layerID, string[] fields)
+        {
+            // 得到地图服务下的ArcObjects map对象
+            ESRI.ArcGIS.Server.IServerContext pServerContext = GetServerContext();
+
+            ESRI.ArcGIS.Carto.IMapServer mapServer = (ESRI.ArcGIS.Carto.IMapServer)pServerContext.ServerObject;
+            ESRI.ArcGIS.Carto.IMapServerObjects2 mapServerObjects = (ESRI.ArcGIS.Carto.IMapServerObjects2)mapServer;
+            string mapName = mapServer.DefaultMapName;
+            ESRI.ArcGIS.Carto.IMap aoMap = mapServerObjects.get_Map(mapName);
+
+            ESRI.ArcGIS.Carto.ILayer pLayer = aoMap.get_Layer(layerID);//得到图层
+            ESRI.ArcGIS.Carto.IGeoFeatureLayer pGeoLayer = pLayer as IGeoFeatureLayer;
+            //设置专题图元素的属性名称列表           
+            IChartRenderer pChartRender = pServerContext.CreateObject("esriCarto.ChartRenderer") as IChartRenderer;
+            IRendererFields pRenderFields = pChartRender as IRendererFields;
+            foreach (string var in fields)
+            {
+                pRenderFields.AddField(var, var);
+            }
+
+            //实例化图表对象并取得元素指定属性的最大值
+            IBarChartSymbol pBarChartSymbol = pServerContext.CreateObject("esriDisplay.BarChartSymbol") as IBarChartSymbol;
+            IChartSymbol pChartSymbol = pBarChartSymbol as IChartSymbol;
+
+            pChartSymbol.MaxValue = GetStaMaxMin(fields, pGeoLayer)[0];
+            pBarChartSymbol.Width = 8;
+            IMarkerSymbol pMarkerSymbol = pBarChartSymbol as IMarkerSymbol;
+            pMarkerSymbol.Size = 50;
+
+            //设置柱状图每列填充效果
+            ISymbolArray pSymbolArray = pBarChartSymbol as ISymbolArray;
+            Random ranColor = new Random();
+            for (int i = 0; i < fields.Length; i++)
+            {
+                IFillSymbol pFillSymbol = pServerContext.CreateObject("esriDisplay.SimpleFillSymbol") as IFillSymbol;
+                pFillSymbol.Color = GetRGB(ranColor.Next(255), ranColor.Next(255), ranColor.Next(255), pServerContext);
+                pSymbolArray.AddSymbol((ISymbol)pFillSymbol);
+            }
+
+            //设置地图图层背景
+            ESRI.ArcGIS.Display.ISimpleFillSymbol pFSymbol = pServerContext.CreateObject("esriDisplay.SimpleFillSymbol") as ESRI.ArcGIS.Display.SimpleFillSymbol;
+            pFSymbol.Color = GetRGB(239, 228, 249, pServerContext);
+            pChartRender.BaseSymbol = pFSymbol as ISymbol;
+
+            //应用柱状专题到指定图层
+            pChartRender.ChartSymbol = pBarChartSymbol as IChartSymbol;
+            pChartRender.Label = "Test";
+            pChartRender.UseOverposter = false;
+            pChartRender.CreateLegend();
+            pGeoLayer.Renderer = pChartRender as IFeatureRenderer;
+
+            //刷新地图显示图表及图例
+            mapServerObjects.RefreshServerObjects();
+            Map1.RefreshResource("MapResourceItem0");
+            Toc1.BuddyControl = "Map1";
+            //Toc1.Refresh();
+            Map1.Refresh();
+            pServerContext.ReleaseContext();
+
+        }
+
+        /// <summary>
+        /// 创建饼状专题图
+        /// </summary>
+        /// <param name="nLayerId">图层Id</param>
+        /// <param name="strFileds">字段名称集合</param>
+        private void CreatePieTheme(int nLayerId, string[] strFileds)
+        {
+            CreatePieTheme(this.Page, nLayerId, strFileds);
+            ////获取服务器对象
+            //IServerContext svrContext =ServerUtility.GetServerContext(this.Page);
+            //if (svrContext == null)
+            //    return;
+            //IMapServer mapSvr = svrContext.ServerObject as IMapServer;
+            //if (mapSvr == null)
+            //    return;
+            ////使用服务器对象
+            //IMapServerObjects2 mapSvrObj = mapSvr as IMapServerObjects2;
+            //if (mapSvrObj == null)
+            //    return;
+            ////远程调用AO对象
+            //string strMapName = mapSvr.DefaultMapName;
+            //IMap aoMap = mapSvrObj.get_Map(strMapName);
+            ////得到图层
+            //ILayer aoLayer = aoMap.get_Layer(nLayerId);
+            //IGeoFeatureLayer aoGeoLyr = aoLayer as IGeoFeatureLayer;
+
+            ////设置专题图的属性列表
+            //IChartRenderer aoCharRndr = svrContext.CreateObject("esriCarto.ChartRenderer") as IChartRenderer;
+            //IRendererFields aoRndrFlds = aoCharRndr as IRendererFields;
+            //foreach (string field in strFileds)
+            //{
+            //    aoRndrFlds.AddField(field, field);
+            //}
+
+        }
+
+        /// <summary>
+        /// 得到服务器上下文：AGSServer远程调用AO  
+        /// </summary>
+        /// <returns></returns>
+        private IServerContext GetServerContext()
+        {
+            string serverName = "localhost";    //服务器机器名称
+            string mapSvrName = "china";        //空间数据服名称
+            IServerObjectManager svrObjMgr = null;
+            //获取SOM，并放入session变量中
+            if (Session["SOM"] == null)
+            {
+                //用ADF connection库
+                AGSServerConnection agsServerConnection = new AGSServerConnection();
+                agsServerConnection.Host = serverName;
+                //建立与服务器的连接
+                agsServerConnection.Connect();
+                svrObjMgr = agsServerConnection.ServerObjectManager;
+            }
+            else
+            {
+                svrObjMgr = Session["SOM"] as ServerObjectManager;
+            }
+
+            //根据服务名来创建上下文
+            IServerContext svrContext = svrObjMgr.CreateServerContext(mapSvrName, "MapServer");
+            return svrContext;
+        }
+        #endregion
+        #region Test
+
+        public void TestAsg()
+        {
+            IServerContext svrContxt = null;
+            try
+            {
+                //1.连接服务器
+                AGSServerConnection agsCon = new AGSServerConnection();
+                agsCon.Host = "localhost";
+                agsCon.Connect();
+                //2.创建serverContext
+                IServerObjectManager som = agsCon.ServerObjectManager;
+                string mapSvrName = "china";
+                string svrType = "MapServer";
+                svrContxt = som.CreateServerContext(mapSvrName, svrType);
+                //3.创建serverObjects
+                IPoint pt = svrContxt.CreateObject("esriGeometry.Point") as IPoint;
+                pt.X = 100;
+                pt.Y = 200;               
+                System.Diagnostics.Debug.WriteLine("ssssssssss");              
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                if (svrContxt != null) { svrContxt.ReleaseContext(); svrContxt = null; }
+            }
+
+
         }
         #endregion
 

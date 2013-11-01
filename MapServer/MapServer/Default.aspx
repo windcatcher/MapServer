@@ -42,13 +42,7 @@
             background-color: Gray;
             float: left;
         }
-        .style1
-        {
-            height: 30px;
-            visibility: hidden;
-            width: 381px;
-        }
-    </style>
+        </style>
     <script type="text/javascript">
         //**获取坐标 
         function GetCoord() {        
@@ -103,6 +97,12 @@
         var message='Pie';
         var context='Map1';
         <%= sCallBackFuncStr%>            
+        }
+        
+        function testAsg() {
+        var message='Test';
+        var context="Map1";
+        <%=sCallBackFuncStr %>
         }
 
 
@@ -178,7 +178,7 @@
         <div id="menu">
             <input id="btn_themeZhu" type="button" value="柱状图" onclick="return createBarTheme()" />
             <input id="btn_themeBing" type="button" value="饼状图" onclick="return createPieTheme()" />
-            <input id="Button5" type="button" value="XX图" />
+            <input id="btn_test" type="button" value="XX图" onclick="return testAsg()" />
             <input id="Button6" type="button" value="button" />
             <input id="Button7" type="button" value="button" />
         </div>
