@@ -203,8 +203,11 @@
                         DisplaySettings="visible=True:transparency=0:mime=True:imgFormat=PNG8:height=100:width=100:dpi=96:color=:transbg=False:displayInToc=True:dynamicTiling="
                         LayerDefinitions="" Name="graph" />
                     <esri:MapResourceItem Definition="&lt;Definition DataSourceDefinition=&quot;localhost&quot; DataSourceType=&quot;ArcGIS Server Local&quot; Identity=&quot;To set, right-click project and 'Add ArcGIS Identity'&quot; ResourceDefinition=&quot;Layers@china&quot; /&gt;"
-                        DisplaySettings="visible=True:transparency=0:mime=True:imgFormat=PNG8:height=100:width=100:dpi=96:color=:transbg=False:displayInToc=True:dynamicTiling="
+                        DisplaySettings="visible=False:transparency=0:mime=True:imgFormat=PNG8:height=100:width=100:dpi=96:color=:transbg=False:displayInToc=True:dynamicTiling="
                         LayerDefinitions="" Name="china" />
+                    <esri:MapResourceItem Definition="&lt;Definition DataSourceDefinition=&quot;http://lms-pc/ArcGIS/services/china/mapserver/WMSServer&quot; DataSourceType=&quot;OGC (WMS) Service&quot; Identity=&quot;dmqfRiLpDtDoSxOJwbSM/Q==&quot; ResourceDefinition=&quot;&quot; /&gt;" 
+                        DisplaySettings="visible=True:transparency=0:mime=True:imgFormat=PNG8:height=100:width=100:dpi=96:color=:transbg=False:displayInToc=True:dynamicTiling=" 
+                        LayerDefinitions="" Name="WmsChina" />
                 </ResourceItems>
             </esri:MapResourceManager>
         </div>

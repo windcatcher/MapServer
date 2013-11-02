@@ -18,6 +18,7 @@ using ESRI.ArcGIS.ADF.Web.DataSources.Graphics;
 using ESRI.ArcGIS.Geodatabase;
 using ESRI.ArcGIS.Display;
 using MapServer.AppCode;
+using MapServer.Common;
 
 
 
@@ -36,38 +37,42 @@ namespace MapServer
 
         public void RaiseCallbackEvent(string eventArgs)
         {
-            switch (eventArgs)
+            if (eventArgs.Contains("attr"))
             {
-                case "attr":
-                    {
-                        LocalByAttribute(eventArgs);
-                    }
-                    break;
-                case "Bar":
-                    {
-                        CreateBarRenderer(7, new string[] { "AREA" });
-                    }
-                    break;
-                case "Pie":
-                    {
-                        CreatePieTheme(7, new string[] { "AREA" });
-                    }
-                    break;
-                case "X":
-                    {
-                        LocalByXY(eventArgs);
-                    }
-                    break;
-                case "Test":
-                    {
-                        TestAsg();
-                    }
-                    break;
-                default:
-                    { }
-                    break;
-
+                LocalByAttribute(eventArgs);
             }
+            else if (eventArgs.Contains("X"))
+            {
+                LocalByXY(eventArgs);
+            }
+            else
+            {
+                switch (eventArgs)
+                {                   
+                    case "Bar":
+                        {
+                            CreateBarRenderer(7, new string[] { "AREA" });
+                        }
+                        break;
+                    case "Pie":
+                        {
+                            CreatePieTheme(7, new string[] { "AREA" });
+                        }
+                        break;                   
+                    case "Test":
+                        {
+                           // TestAsg();
+                            //TestGetLayer();
+                            TestQuery();
+                        }
+                        break;
+                    default:
+                        { }
+                        break;
+                }
+            }
+                    
+         
         }
         /// <summary>
         /// 根据属性定位
@@ -125,13 +130,8 @@ namespace MapServer
                     //对指定图层进行查询，查询结果保存为
                     table = qFunc.Query(null, layerIds[layerId], sf);
                     if (table == null || table.Rows.Count == 0)
-                    {
-                        object[] objs = new object[1];
-                        string sa = "alert('没有找到该城市')";
-                        objs[0] = sa;
-                        CallbackResult callbackRes = new CallbackResult(null, null, "JavaScript", objs);
-                        Map1.CallbackResults.Add(callbackRes);
-                        sCallBackFuncStr = Map1.CallbackResults.ToString();
+                    {                       
+                        sCallBackFuncStr = JsMesage.ShowMessage(Map1, "没有找到该城市");
                         continue;
                     }
                     for (int i = 0; i < table.Columns.Count; i++)
@@ -146,7 +146,7 @@ namespace MapServer
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                System.Diagnostics.Debug.WriteLine(ex);                              
                             }
                             try
                             {
@@ -154,7 +154,7 @@ namespace MapServer
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                System.Diagnostics.Debug.WriteLine(ex);    
                             }
                             sCallBackFuncStr = Map1.CallbackResults.ToString();
                             return;
@@ -584,33 +584,60 @@ namespace MapServer
         {
             IServerContext svrContxt = null;
             try
-            {
-                //1.连接服务器
-                AGSServerConnection agsCon = new AGSServerConnection();
-                agsCon.Host = "localhost";
-                agsCon.Connect();
-                //2.创建serverContext
-                IServerObjectManager som = agsCon.ServerObjectManager;
-                string mapSvrName = "china";
-                string svrType = "MapServer";
-                svrContxt = som.CreateServerContext(mapSvrName, svrType);
+            {              
+                svrContxt = ServerUtility.GetServerContext(this.Page);
                 //3.创建serverObjects
-                IPoint pt = svrContxt.CreateObject("esriGeometry.Point") as IPoint;
+                IPoint pt = svrContxt.CreateObject(PublicConst.Lbl_GeoObjt_Point) as IPoint;
                 pt.X = 100;
-                pt.Y = 200;               
-                System.Diagnostics.Debug.WriteLine("ssssssssss");              
+                pt.Y = 200;
+                sCallBackFuncStr = JsMesage.ShowMessage(Map1, string.Format("x={0},y={1}", pt.X, pt.Y));                           
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
             }
             finally
             {
                 if (svrContxt != null) { svrContxt.ReleaseContext(); svrContxt = null; }
             }
+        }
 
+        public void TestGetLayer()
+        {
+            IEnumerable funs = Map1.GetFunctionalities();
+            foreach (IGISFunctionality gisFun in funs)
+            {
+                System.Diagnostics.Debug.WriteLine(string.Format("gisFun.name={0}", gisFun.Name));
+                IGISResource gisRes= gisFun.Resource;
+                System.Diagnostics.Debug.WriteLine(string.Format("gisRes.name={0}  gisRes.ResourceDefinition={1}", gisRes.Name,gisRes.ResourceDefinition));
+                IGISDataSource gisDs = gisRes.DataSource;
+                System.Diagnostics.Debug.WriteLine(string.Format("gisDs.name={0}  gisDs.ResourceDefinition={1} gisDs.Identity={2}", gisDs.Name, gisDs.DataSourceDefinition, gisDs.Identity));
+                
+            }
+        }
+
+        public void TestQuery()
+        {
+            IGISResource gisRes = ServerUtility.GetGISResourceByName(Map1, PublicConst.Lbl_WmsSvr_China);
+            ESRI.ArcGIS.ADF.Web.DataSources.OGCWMSService.MapResource mapRes = gisRes as ESRI.ArcGIS.ADF.Web.DataSources.OGCWMSService.MapResource;
+            IQueryFunctionality QueryFun;
+            string[] layerIds=null,layerNames=null;
+            bool isSupport = false;
+            if(mapRes.SupportsFunctionality(typeof(IQueryFunctionality)))
+            {
+              QueryFun=mapRes.CreateFunctionality(typeof(IQueryFunctionality),"query") as IQueryFunctionality;
+              QueryFun.GetQueryableLayers(null,out layerIds,out layerNames);
+            }
+            if (layerNames == null || layerNames.Length == 0)
+                return;
+            for (int i = 0; i < layerNames.Length; i++)
+            {
+                System.Diagnostics.Debug.WriteLine(string.Format("图层：{0}",layerNames[i]));
+            }
 
         }
+        
         #endregion
 
 
